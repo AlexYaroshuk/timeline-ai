@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: responseMessage.content });
   } catch (error) {
     console.error(error);
-    return new NextResponse().rewrite('/error', 500).json({ message: `Error: ${error.message ?? 'An error occurred'}` });
+    return NextResponse.json({ message: `Error: ${error.message ?? 'An error occurred'}` }).status(500);
   }
 
 }
