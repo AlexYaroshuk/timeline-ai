@@ -1,7 +1,7 @@
 
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState  } from 'react';
 import 'tailwindcss/tailwind.css';
 
 export default function Home() {
@@ -10,7 +10,6 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [events, setEvents] = useState([]); // New state variable for events
 
-    const chartRef = useRef(null);
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
@@ -38,31 +37,7 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    if (chartRef.current && events.length > 0) {
-      const ctx = chartRef.current.getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: events,
-          datasets: [{
-            data: events.map((_, index) => index + 1),
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgb(75, 192, 192)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          scales: {
-            x: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-  }, [events]);
+
 
   return (
     <div className="container mx-auto px-4">
@@ -86,8 +61,8 @@ export default function Home() {
 </button>
         {events.length > 0 && <p className="mt-4 text-sm">Generated timeline:</p>}
         <div className="flex flex-wrap items-center overflow-x-auto">
-          {events.map((event, index) => (
-            <React.Fragment key={index}>
+        {events.map((event, index) => (
+  <React.Fragment key={event.id}>
               <div className="mr-5 my-2 p-2 border-2 border-gray-300 text-white">
                 {event}
               </div>

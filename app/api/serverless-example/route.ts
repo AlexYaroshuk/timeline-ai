@@ -5,13 +5,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY as string,
 });
 
-function processStory(events) {
+function processStory(events: string[]) {
   // Process the story and return a sequence of events
   // This is a placeholder - you'll need to implement this function
-  const processedEvents = events; // Use the events parameter directly
+
   return JSON.stringify(events);
 }
-
 export async function GET(request: NextRequest) {
   const story = request.nextUrl.searchParams.get('text');
   const messages = [{ role: "user", content: story }];
@@ -60,11 +59,7 @@ export async function GET(request: NextRequest) {
         "content": functionResponse,
       });
 
-      const secondResponse = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
-      });
-    
+
       return NextResponse.json({
 
         events: JSON.parse(functionResponse),
