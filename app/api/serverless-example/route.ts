@@ -14,6 +14,7 @@ function processStory(events: string[]) {
 export async function GET(request: NextRequest) {
   const story = request.nextUrl.searchParams.get('text') ?? '';
   const messages: { role: "user" | "assistant" | "function"; content: string; name?: string; }[] = [{ role: "user", content: story }];
+
   const functions = [
     {
       name: "process_story",
@@ -46,45 +47,33 @@ export async function GET(request: NextRequest) {
 
       const functionName = responseMessage.function_call.name;
       let functionResponse: string | undefined;
+
       if (functionName in availableFunctions) {
         const functionToCall = availableFunctions[functionName as keyof typeof availableFunctions];
         const functionArgs = JSON.parse(responseMessage.function_call.arguments);
         functionResponse = functionToCall(functionArgs.events);
-        // rest of your code
-      } else {
-        // handle the case where functionName is not a key of availableFunctions
       }
 
-/* messages.push({
-  role: responseMessage.role as "assistant",
-  content: responseMessage.content ?? '',
-}); */
       messages.push({
         "role": "function",
         "name": functionName ?? '',
         "content": functionResponse ?? '',
       });
 
-
-      let events;
-      try {
-        events = JSON.parse(functionResponse ?? '[]');
-      } catch {
-        console.error('Invalid JSON:', functionResponse);
-        events = []; // or some other default value
-      }
+      let events = JSON.parse(functionResponse ?? '[]');
       
       return NextResponse.json({ events });
     }
 
     return NextResponse.json({ message: responseMessage.content });
-    catch (error) {
-      console.error(error);
-      let errorMessage = 'An error occurred';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      return NextResponse.json({ message: `Error: ${errorMessage}` }).status(500);
+  } catch (error) {
+    console.error(error);
+    let errorMessage = 'An error occurred';
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
     }
+
+    return new NextResponse(JSON.stringify({ message: `Error: ${errorMessage}` }), { status: 500 });
   }
 }

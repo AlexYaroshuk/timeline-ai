@@ -7,14 +7,13 @@ import 'tailwindcss/tailwind.css';
 export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [events, setEvents] = useState([]); // New state variable for events
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState([]); 
 
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(event.target.value);
-  };
-
+    };
   const handleSubmit = async () => {
     setIsLoading(true);
     setError(null);
@@ -31,9 +30,16 @@ export default function Home() {
       setEvents(data.events); // Store the new events in state
   
     } catch (error) {
-      setError(error.message);
+      
+      console.error(error);
+      let errorMessage = 'An error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
+      console.log(events)
     }
   };
 
@@ -59,20 +65,20 @@ export default function Home() {
 >
   {isLoading ? 'Loading...' : 'Generate Timeline'}
 </button>
-        {events.length > 0 && <p className="mt-4 text-sm">Generated timeline:</p>}
-        <div className="flex flex-wrap items-center overflow-x-auto">
-        {events.map((event, index) => (
-  <React.Fragment key={event.id}>
-              <div className="mr-5 my-2 p-2 border-2 border-gray-300 text-white">
-                {event}
-              </div>
-              {index < events.length - 1 && (
-                <svg className="mr-5 my-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              )}
-            </React.Fragment>
-          ))}
+        {events.length > 0 && <p className="mt-16 text-sm">Generated timeline:</p>}
+        <div className="flex flex-wrap items-center overflow-x-auto mt-4">
+       {events.map((event, index) => (
+  <React.Fragment key={index}>
+    <div className="mr-5 my-2 p-2 border-2 border-gray-300">
+      {event}
+    </div>
+    {index < events.length - 1 && (
+      <svg className="mr-5 my-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+      </svg>
+    )}
+  </React.Fragment>
+))}
         </div>
       </div>
     </div>
