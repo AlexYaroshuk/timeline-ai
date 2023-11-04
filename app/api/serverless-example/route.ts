@@ -56,7 +56,10 @@ if (functionName in availableFunctions) {
   // handle the case where functionName is not a key of availableFunctions
 }
 
-      messages.push(responseMessage);
+messages.push({
+  role: responseMessage.role,
+  content: responseMessage.content,
+});
       messages.push({
         "role": "function",
         "name": functionName,
