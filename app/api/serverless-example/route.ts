@@ -57,7 +57,7 @@ if (functionName in availableFunctions) {
 }
 
 messages.push({
-  role: responseMessage.role,
+  role: responseMessage.role as "user",
   content: responseMessage.content,
 });
       messages.push({
