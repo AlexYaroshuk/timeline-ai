@@ -1,7 +1,9 @@
 // timelineai/app/api/serverless-example/route.ts
 import { NextResponse, NextRequest } from 'next/server';
 import OpenAI from "openai";
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY as string,
+});
 
 function processStory(events) {
   // Process the story and return a sequence of events
