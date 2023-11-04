@@ -45,37 +45,43 @@ export async function GET(request: NextRequest) {
         process_story: processStory,
       };
 
-   
-const functionName = responseMessage.function_call.name;
-if (functionName in availableFunctions) {
-  const functionToCall = availableFunctions[functionName as keyof typeof availableFunctions];
-  const functionArgs = JSON.parse(responseMessage.function_call.arguments);
-  const functionResponse = functionToCall(functionArgs.events);
-  // rest of your code
-} else {
-  // handle the case where functionName is not a key of availableFunctions
-}
+      const functionName = responseMessage.function_call.name;
+      let functionResponse: string | undefined;
+      if (functionName in availableFunctions) {
+        const functionToCall = availableFunctions[functionName as keyof typeof availableFunctions];
+        const functionArgs = JSON.parse(responseMessage.function_call.arguments);
+        functionResponse = functionToCall(functionArgs.events);
+        // rest of your code
+      } else {
+        // handle the case where functionName is not a key of availableFunctions
+      }
 
 messages.push({
-  role: responseMessage.role as "user",
-  content: responseMessage.content,
+  role: responseMessage.role as "assistant",
+  content: responseMessage.content ?? '',
 });
       messages.push({
         "role": "function",
-        "name": functionName,
-        "content": functionResponse,
+        "name": functionName ?? '',
+        "content": functionResponse ?? '',
       });
 
 
-      return NextResponse.json({
-
-        events: JSON.parse(functionResponse),
-      });
+      let events;
+      try {
+        events = JSON.parse(functionResponse);
+      } catch {
+        console.error('Invalid JSON:', functionResponse);
+        events = []; // or some other default value
+      }
+      
+      return NextResponse.json({ events });
     }
 
     return NextResponse.json({ message: responseMessage.content });
   } catch (error) {
     console.error(error);
-    return NextResponse.error(`Error: ${error.message}`, 500);
+    return NextResponse.error(`Error: ${error.message ?? 'An error occurred'}`, 500);
   }
+
 }
