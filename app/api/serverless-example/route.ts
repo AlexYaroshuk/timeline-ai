@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
 
       let events;
       try {
-        events = JSON.parse(functionResponse);
+        events = JSON.parse(functionResponse ?? '[]');
       } catch {
         console.error('Invalid JSON:', functionResponse);
         events = []; // or some other default value
