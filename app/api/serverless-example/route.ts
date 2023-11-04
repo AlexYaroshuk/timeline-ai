@@ -12,7 +12,7 @@ function processStory(events: string[]) {
   return JSON.stringify(events);
 }
 export async function GET(request: NextRequest) {
-  const story = request.nextUrl.searchParams.get('text');
+  const story = request.nextUrl.searchParams.get('text') ?? '';
   const messages = [{ role: "user", content: story }];
 
   const functions = [
