@@ -56,10 +56,10 @@ export async function GET(request: NextRequest) {
         // handle the case where functionName is not a key of availableFunctions
       }
 
-messages.push({
+/* messages.push({
   role: responseMessage.role as "assistant",
   content: responseMessage.content ?? '',
-});
+}); */
       messages.push({
         "role": "function",
         "name": functionName ?? '',
