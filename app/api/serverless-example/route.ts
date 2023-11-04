@@ -78,9 +78,13 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ message: responseMessage.content });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message: `Error: ${error.message ?? 'An error occurred'}` }).status(500);
-  }
+    catch (error) {
+      console.error(error);
+      let errorMessage = 'An error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      return NextResponse.json({ message: `Error: ${errorMessage}` }).status(500);
+    }
 
 }
