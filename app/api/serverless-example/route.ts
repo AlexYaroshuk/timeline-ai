@@ -46,15 +46,15 @@ export async function GET(request: NextRequest) {
       };
 
    
-      const functionName = responseMessage.function_call.name;
-      if (functionName in availableFunctions) {
-        const functionToCall = availableFunctions[functionName];
-        const functionArgs = JSON.parse(responseMessage.function_call.arguments);
-        const functionResponse = functionToCall(functionArgs.events);
-        // rest of your code
-      } else {
-        // handle the case where functionName is not a key of availableFunctions
-      }
+const functionName = responseMessage.function_call.name;
+if (functionName in availableFunctions) {
+  const functionToCall = availableFunctions[functionName as keyof typeof availableFunctions];
+  const functionArgs = JSON.parse(responseMessage.function_call.arguments);
+  const functionResponse = functionToCall(functionArgs.events);
+  // rest of your code
+} else {
+  // handle the case where functionName is not a key of availableFunctions
+}
 
       messages.push(responseMessage);
       messages.push({
