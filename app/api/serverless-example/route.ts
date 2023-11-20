@@ -16,19 +16,32 @@ export async function GET(request: NextRequest) {
   const messages: { role: "user" | "assistant" | "function"; content: string; name?: string; }[] = [{ role: "user", content: story }];
 
   const functions = [
-    {
-      name: "process_story",
-      description: `Extract each event from the story and add it to the events array. Each event should not be more than 2-3 words, simplify whenever possible. This is the processed story: ${story}`,
-      parameters: {
-        type: "object",
-        properties: {
-      
-          events: { type: "array", items: { type: "string" }, description: "A list of events in the story, in chronological order" },
+  {
+    name: "process_story",
+    description: `Extract each event from the story and add it to the events array. An event item could be either the event itself or a time duration between another event. This is controlled by isTimeGapEvent property. If this is true, the content of this event should be the time. Otherwise, the content is the actual event, simplified to maximum 2 words, and its "duration" would be the duration of this event. For example: "I woke up and 2 hours later I went to work" would produce 3 events, "woke up"(isTimeGapEvent is false), "2 hours later"(isTimeGapEvent s true) and "work"(false). "Duration" is optional and defines the time duration for an event. For example, "I was working for 3 hours" would produce an event with duration "3 hours".`,
+    parameters: {
+      type: "object",
+      properties: {
+        events: { 
+          type: "array", 
+          items: { 
+            type: "object",
+            properties: {
+              isTimeGapEvent: { type: "boolean", description: "Indicates if the event is a time duration" },
+              content: { type: "string", description: "The event or time duration, simplified to maximum 2 words" },
+              duration: { type: "string", description: "The duration of an event"}
+            },
+            required: ["isTimeDuration", "content"]
+          }, 
+          description: "A list of events in the story, in chronological order" 
         },
-        required: [ "events"],
       },
+      required: [ "events"],
     },
-  ];
+  },
+];
+
+  
 
   try {
     const response = await openai.chat.completions.create({

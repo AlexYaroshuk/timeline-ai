@@ -4,11 +4,17 @@
 import React, { useState  } from 'react';
 import 'tailwindcss/tailwind.css';
 
+interface Event {
+  isTimeGapEvent: boolean;
+  content: string;
+  duration: string;
+}
+
 export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState([]); 
+  const [events, setEvents] = useState<Event[]>([]);
 
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -67,10 +73,11 @@ export default function Home() {
 </button>
         {events.length > 0 && <p className="mt-16 text-sm">Generated timeline:</p>}
         <div className="flex flex-wrap items-center overflow-x-auto mt-4">
-       {events.map((event, index) => (
+        {events.map((event, index) => (
   <React.Fragment key={index}>
-    <div className="mr-5 my-2 p-2 border-2 border-gray-300">
-      {event}
+    <div className={`mr-5 my-2 p-2 ${event.isTimeGapEvent ? '' : 'border-2 border-gray-300'}`}>
+      {event.content}
+      {event.duration && <p className="mt-2 text-sm text-gray-500">{event.duration}</p>}
     </div>
     {index < events.length - 1 && (
       <svg className="mr-5 my-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
